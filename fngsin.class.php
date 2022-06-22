@@ -18,32 +18,23 @@ class fngsin{
 	// Validates using the Luhn Algorithm (MOD10)
 	// See: http://en.wikipedia.org/wiki/Luhn_algorithm
 	function luhn($str){
-		$odd = !strlen($str)%2;
 		$sum = 0;
-		for($i=0;$i<strlen($str);++$i){
-			$n=0+$str[$i];
-			$odd=!$odd;
-			if($odd){
-				$sum+=$n;
-			}else{
-				$x=2*$n;
-				$sum+=$x>9?$x-9:$x;
+		for ($i = 0; $i < strlen($str); $i++) {
+			if ($i % 2) {
+				// Double up even numbers
+				$x = 2 * $str[$i];
+				$sum += ($x > 9) ? $x - 9 : $x;
+			} else {
+				$sum += $str[$i];
 			}
 		}
-		return(($sum%10)==0);
+
+		return (($sum % 10) == 0);
 	}
 
 	function validateSIN($sin){
-		$sin = preg_replace('/[^0-9]/','',$sin);
-		if(strlen($sin) == 9){
-			if($sin[0] == '0' || $sin[0] == '8'){
-				return false;
-			}else{
-				return $this->luhn($sin);
-			}
-		}else{
-			return false;
-		}
+		$sin = preg_replace('/[^\d]/', '', $sin);
+		return (strlen($sin) == 9 && !($sin[0] == '0' || $sin[0] == '8') && luhn($sin))
 	}
 
 	function generateSIN($separator = ' '){
